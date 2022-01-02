@@ -1,18 +1,48 @@
 import sys
 from lib import *
+from classes import OutputFrame
+import matplotlib 
+from matplotlib import pyplot as plt
+matplotlib.use('Agg') 
+import cv2
+import numpy as np
+import time 
 
 
-# arguments to the main file 
-if not os.path.exists(str(pathlib.Path(__file__).parent.absolute()) + "/movieClips"):
-    os.makedirs(str(pathlib.Path(__file__).parent.absolute()) + "/movieClips")
-assert len(sys.argv) > 2, "** ERROR ** : not enough arguments have been passed"
-nameScript, videoPath, folderName, mod = (arg for arg in sys.argv) 
-videoPath =  str(pathlib.Path(__file__).parent.absolute()) + "/" + videoPath
-assert os.path.exists(videoPath), str( "** ERROR ** :"+ videoPath +"does not exist")
+def main():
+    initialPrint()
+    # Instantiate initial elements 
+    videoPath,folderName,mod = assertations()
+    generateFolder(folderName)
 
-# Procede to main 
-initialPrint()
-generateFolder(folderName)
+    # Output frame object 
+    outputFrame = OutputFrame
+    NFrame = countTotalFrames(videoPath)
+    cap = cv2.VideoCapture(videoPath)
+    savedPlots = countTotalPlots(folderName)
 
+    # Loop over every remaining frame
+    for nFrame in range(savedPlots,NFrame,1):
+        ret,videoFrame = cap.read()
+        if ret:
+            cv2.imshow('Video Frame',videoFrame)
+            cv2.waitKey(1)
+            #generatePlot(videoFrame,folderName,nFrame)
+        print(f'nFrame : {nFrame} out of {NFrame}')
+    
+    
+    # Closing operations
+    cap.release()
+    cv2.destroyAllWindows()
+
+    
+    
+
+
+
+
+
+if(__name__== '__main__'):
+    main()
 
 
